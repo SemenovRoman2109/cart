@@ -15,7 +15,7 @@
             <form method="POST" class="delet_from_cart">
                 {% csrf_token %}
                 <input type="hidden" name="product_pk" value="{{ product.pk}}">
-                <button> Видалити до кошика</button>
+                <button>Видалити з кошика</button>
             </form>
         </div>
     {% endfor %}

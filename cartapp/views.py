@@ -19,8 +19,7 @@ def show_products(request):
 def show_cart(request):
     if "product_pk" in request.COOKIES: #Якщо у користувача е куки product_pk
         
-        
-        products_pk = products_pk.split(' ') #Зi строки з pk(номером) замовлення робемо список роздiлюючи ix по пробiлам
+        products_pk = request.COOKIES['product_pk'].split(" ") #Зi строки з pk(номером) замовлення робемо список роздiлюючи ix по пробiлам
 
         list_products = list() # Cтворюемо список продуктiв pk яких е у списку pk
         for product_pk in products_pk: #Перебираемо список pk
@@ -28,5 +27,35 @@ def show_cart(request):
         response = render(request,"cart.html",context={"products": list_products})# Формуемо html сторiнку у яку передаемо список замовленнь
     else:
         response = render(request,"cart.html",context={"products":list()})#  Формуемо html сторiнку з пустим списком замовленнь
-    
+               
+    if request.method == "POST":
+        if "product_pk" in request.COOKIES:
+            products_pk = request.COOKIES['product_pk'].split(' ') # Додаемо старi даннi до нових i по середеннi ставимо пробiл
+            pk_deleted = request.POST.get('product_pk')
+            print(pk_deleted)
+            print(products_pk)
+            if len(products_pk) > 1:
+                for i in products_pk:
+                    if i == str(pk_deleted):
+                        products_pk.pop(products_pk.index(i))
+                        break
+                print(products_pk)
+                new_product = ""
+                for pk in products_pk:
+                    new_product = new_product + " " + pk 
+                new_product = new_product[1:]
+                
+                list_products = list() # Cтворюемо список продуктiв pk яких е у списку pk
+                for product_pk in products_pk: #Перебираемо список pk
+                    list_products.append(Product.objects.get(pk=product_pk))
+                    
+                response = render(request,"cart.html",context={"products": list_products})
+                response.set_cookie('product_pk',new_product)
+                return response 
+            else:
+                
+                response = render(request,"cart.html",context={"products": list()})
+                response.delete_cookie('product_pk') # Замiнюемо старi даннi product_pk у куках на новi
+                return response 
+        
     return response # Повертаемо сторiнку кошику
