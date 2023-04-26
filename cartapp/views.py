@@ -8,11 +8,9 @@ def show_products(request):
         if "product_pk" not in request.COOKIES: # Якщо у користувача в куках немае product_pk (вiн не додав жоден товар у корзину)
             new_product = request.POST.get('product_pk') # Отрымуемо pk(номер) обраного товару
             response.set_cookie('product_pk',new_product) # Додаемо до кукiв нове значення 
-            return response #Повертаемо сторiнку вiдповiдi
         else: # Якщо у користувача в куках е product_pk (У нього вже були даннi у product_pk)
             new_product = request.COOKIES['product_pk'] + " " + request.POST.get('product_pk') # Додаемо старi даннi до нових i по середеннi ставимо пробiл
             response.set_cookie('product_pk',new_product) # Замiнюемо старi даннi product_pk у куках на новi
-            return response #Повертаемо сторiнку вiдповiдi
 
     return response
 
@@ -32,14 +30,13 @@ def show_cart(request):
         if "product_pk" in request.COOKIES:
             products_pk = request.COOKIES['product_pk'].split(' ') # Додаемо старi даннi до нових i по середеннi ставимо пробiл
             pk_deleted = request.POST.get('product_pk')
-            print(pk_deleted)
-            print(products_pk)
+                        
             if len(products_pk) > 1:
                 for i in products_pk:
                     if i == str(pk_deleted):
                         products_pk.pop(products_pk.index(i))
                         break
-                print(products_pk)
+                
                 new_product = ""
                 for pk in products_pk:
                     new_product = new_product + " " + pk 
@@ -51,11 +48,11 @@ def show_cart(request):
                     
                 response = render(request,"cart.html",context={"products": list_products})
                 response.set_cookie('product_pk',new_product)
-                return response 
+
             else:
                 
                 response = render(request,"cart.html",context={"products": list()})
                 response.delete_cookie('product_pk') # Замiнюемо старi даннi product_pk у куках на новi
-                return response 
+
         
     return response # Повертаемо сторiнку кошику

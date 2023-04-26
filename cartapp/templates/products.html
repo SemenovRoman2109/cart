@@ -10,7 +10,7 @@
     <hr> 
     <p> {{ item.name }}</p>
     <p> {{ item.cost }}</p>
-    <form method="POST" class="add-to-cart">
+    <form method="post" class="add-to-cart" action="{% url 'products' %}">
         {% csrf_token %}
         <input type="hidden" name="product_pk" value="{{ item.pk}}">
         <button> додати до кошика</button>
@@ -18,5 +18,21 @@
     
     
     {% endfor %}
+    <!-- Подключаем JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $(".add-to-cart").on("submit", function(event){
+                event.preventDefault();
+                // Отправляем запрос
+                $.ajax({
+                    type: "POST",
+                    url: $(this).action,
+                    data: $(this).serialize(),
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -20,7 +20,7 @@ from cartapp.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('products/', show_products),
-    path('cart/', show_cart)
+    path('products/', show_products,name="products"),
+    path('cart/', show_cart,name="cart")
     
 ]

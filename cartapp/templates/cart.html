@@ -7,17 +7,41 @@
 </head>
 <body>
     <h1>Ваш кошик</h1>
-    {% for product in products %}
-        <div>
-            <hr>
-            <p> {{ product.name }}</p>
-            <p> {{ product.cost }}</p>
-            <form method="POST" class="delet_from_cart">
-                {% csrf_token %}
-                <input type="hidden" name="product_pk" value="{{ product.pk}}">
-                <button>Видалити з кошика</button>
-            </form>
-        </div>
-    {% endfor %}
+    <div class="products">
+        {% for product in products %}
+            <div>
+                <hr>
+                <p> {{ product.name }}</p>
+                <p> {{ product.cost }}</p>
+                <form method="post" class="delet_from_cart" action="{% url 'cart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_pk" value="{{ product.pk}}">
+                    <button>Видалити з кошика</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Подключаем JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $(".delet_from_cart").on("submit", function(event){
+                event.preventDefault();
+
+                let parentDiv = $(this).closest('div'); // Находим div родитель формы
+                // Отправляем запрос
+                $.ajax({
+                    type: "POST", 
+                    url: $(this).action,
+                    data: $(this).serialize(),
+                    success: function() {
+                        parentDiv.remove(); // Удалем родительский div после успешного выполнения запроса
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
